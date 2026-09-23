@@ -1,0 +1,24 @@
+services:
+  # Option 1: Unified Full-Stack Service (FastAPI + React Static build)
+  - type: web
+    name: hydroguard-xai-app
+    env: python
+    buildCommand: "npm --prefix frontend install && npm --prefix frontend run build && pip install -r requirements.txt"
+    startCommand: "python -m uvicorn backend.main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: CORS_ORIGINS
+        value: "*"
+
+  # Option 2: Standalone API Service (If using Vercel for Frontend)
+  - type: web
+    name: hydroguard-xai-backend
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "cd backend && python -m uvicorn main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: CORS_ORIGINS
+        value: "*"

@@ -1,0 +1,13 @@
+{
+  "model_type": "Random Forest Ensemble (Dual Classifier & Regressor)",
+  "training_samples": 1920,
+  "test_samples": 480,
+  "accuracy": 0.9458,
+  "precision": 0.9459,
+  "recall": 0.9458,
+  "f1_score": 0.9428,
+  "mae": 0.9994,
+  "rmse": 1.6836,
+  "r2_score": 0.9967,
+  "evaluation_disclaimer": "Metrics calculated on prototype simulated river telemetry dataset for innovation demonstration."
+}
