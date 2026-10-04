@@ -1,18 +1,17 @@
 """
 HydroGuard-XAI - Explainable AI (XAI) Feature Attribution & Interpretation Engine
-Computes exact tree-based feature attributions (TreeSHAP principles), generates dynamic
-human-understandable environmental explanations, and identifies primary risk drivers.
+Computes exact Shapley feature attributions using SHAP TreeExplainer (Lundberg et al., 2020),
+generates dynamic human-understandable environmental explanations, and identifies primary risk drivers.
 """
 
 import numpy as np
+import shap
 from sklearn.tree import _tree
 from xai.thresholds import evaluate_parameter_status, PARAM_METADATA
 
 def compute_tree_regressor_attributions(regressor, X_scaled_sample, feature_names):
     """
-    Computes exact local feature contributions for a Random Forest Regressor
-    by traversing the decision paths of each individual estimator tree.
-    Guarantees: sum(attributions) + base_value = predicted_score
+    Fallback tree-path attribution method if SHAP C-extension is unavailable.
     """
     sample = X_scaled_sample.reshape(1, -1)
     n_features = len(feature_names)
@@ -23,11 +22,9 @@ def compute_tree_regressor_attributions(regressor, X_scaled_sample, feature_name
     
     for tree in regressor.estimators_:
         t = tree.tree_
-        # Expected value at root
         root_val = t.value[0, 0, 0]
         base_values.append(root_val)
         
-        # Traverse node path for this sample
         node_id = 0
         current_val = root_val
         
@@ -47,7 +44,6 @@ def compute_tree_regressor_attributions(regressor, X_scaled_sample, feature_name
             node_id = next_node
             current_val = next_val
 
-    # Average across all trees in the ensemble
     mean_base_value = float(np.mean(base_values))
     avg_contributions = total_contributions / n_estimators
     
@@ -179,15 +175,33 @@ class XAIExplainer:
         self.preprocessor = model_bundle["preprocessor"]
         self.feature_names = model_bundle["feature_names"]
         self.baseline_stats = model_bundle.get("baseline_stats", {})
+        
+        # Initialize SHAP TreeExplainer (Lundberg et al., 2020)
+        try:
+            self.tree_explainer = shap.TreeExplainer(self.regressor)
+            self._has_shap = True
+        except Exception as e:
+            self.tree_explainer = None
+            self._has_shap = False
 
     def explain(self, raw_params: dict, risk_score: float, risk_level: str) -> dict:
         # Preprocess sample
         X_scaled = self.preprocessor.transform(raw_params)
         
-        # Exact Tree Attribution
-        raw_attributions, base_value = compute_tree_regressor_attributions(
-            self.regressor, X_scaled, self.feature_names
-        )
+        # Compute exact SHAP values using TreeExplainer
+        if self._has_shap and self.tree_explainer is not None:
+            shap_values = self.tree_explainer.shap_values(X_scaled)
+            # shap_values shape for regressor: (1, n_features) or (n_features,)
+            sample_shap = shap_values[0] if shap_values.ndim > 1 else shap_values
+            raw_attributions = {
+                feat: float(sample_shap[i]) for i, feat in enumerate(self.feature_names)
+            }
+            exp_val = np.ravel(self.tree_explainer.expected_value)[0]
+            base_value = float(exp_val)
+        else:
+            raw_attributions, base_value = compute_tree_regressor_attributions(
+                self.regressor, X_scaled, self.feature_names
+            )
 
         # Build feature drivers breakdown
         drivers = []

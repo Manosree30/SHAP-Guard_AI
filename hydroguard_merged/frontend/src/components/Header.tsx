@@ -1,7 +1,7 @@
 import React from 'react';
 import { 
   Activity, Droplets, MapPin, AlertTriangle, Sparkles, 
-  TrendingUp, Compass, Info, Radio, RefreshCw 
+  TrendingUp, Compass, Info, Radio, RefreshCw, LogOut 
 } from 'lucide-react';
 import { StationItem, DemoScenario } from '../types';
 
@@ -17,6 +17,7 @@ interface HeaderProps {
   onOpenAbout: () => void;
   demoScenarios: DemoScenario[];
   onSelectScenario: (scenario: DemoScenario) => void;
+  onLogout?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -30,7 +31,8 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleStreaming,
   onOpenAbout,
   demoScenarios,
-  onSelectScenario
+  onSelectScenario,
+  onLogout
 }) => {
   return (
     <header className="sticky top-0 z-40 bg-[#060c1c]/90 backdrop-blur-md border-b border-cyan-900/30 shadow-lg shadow-black/40">
@@ -62,7 +64,7 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* Quick River Selector & IoT Simulator Controls */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2 sm:space-x-3">
             {/* Location Selector */}
             <div className="relative flex items-center bg-slate-900/80 border border-slate-700/60 rounded-lg px-3 py-1.5 shadow-inner">
               <MapPin className="w-4 h-4 text-cyan-400 mr-2 shrink-0" />
@@ -79,10 +81,10 @@ export const Header: React.FC<HeaderProps> = ({
               </select>
             </div>
 
-            {/* Live Stream Telemetry Toggle */}
+            {/* Simulated Stream Telemetry Toggle */}
             <button
               onClick={onToggleStreaming}
-              title="Toggle Simulated Real-time IoT Sensor Stream"
+              title="Toggle Real-Time Simulated IoT Sensor Stream"
               className={`hidden lg:flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
                 isStreaming
                   ? 'bg-emerald-950/80 border-emerald-500/60 text-emerald-300 shadow-md shadow-emerald-500/20'
@@ -90,7 +92,7 @@ export const Header: React.FC<HeaderProps> = ({
               }`}
             >
               <Radio className={`w-3.5 h-3.5 ${isStreaming ? 'animate-pulse text-emerald-400' : 'text-slate-400'}`} />
-              <span>{isStreaming ? 'Live IoT: ON' : 'Live IoT: OFF'}</span>
+              <span>{isStreaming ? 'Simulated IoT: ON' : 'Simulated IoT: OFF'}</span>
             </button>
 
             {/* Quick Demo Scenario Dropdown */}
@@ -122,6 +124,18 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <Info className="w-4 h-4" />
             </button>
+
+            {/* Logout Trigger */}
+            {onLogout && (
+              <button
+                onClick={onLogout}
+                title="Sign out of HydroGuard-XAI"
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-rose-950/60 border border-rose-600/60 text-rose-200 hover:bg-rose-900/80 hover:text-white hover:border-rose-500 shadow-sm shadow-rose-950/50 transition-all text-xs font-mono font-bold cursor-pointer"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Logout</span>
+              </button>
+            )}
           </div>
         </div>
 

@@ -11,6 +11,7 @@ import { TrendsDashboard } from './components/TrendsDashboard';
 import { InteractiveMap } from './components/InteractiveMap';
 import { AlertsPanel } from './components/AlertsPanel';
 import { AboutModal } from './components/AboutModal';
+import { LoginPage } from './components/LoginPage';
 
 import { 
   StationItem, WaterQualityParams, PredictionResponse, 
@@ -23,6 +24,14 @@ import {
 import { RefreshCw, Radio, Sparkles } from 'lucide-react';
 
 export function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('hydroguard_auth') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   const [stations, setStations] = useState<StationItem[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<string>('Cauvery River');
@@ -48,20 +57,26 @@ export function App() {
   const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
   const [isAboutOpen, setIsAboutOpen] = useState<boolean>(false);
   const [isStreaming, setIsStreaming] = useState<boolean>(false);
-  const [lastTelemetryTimestamp, setLastTelemetryTimestamp] = useState<string>('25 Aug 2026, 04:30 PM');
+  const [lastTelemetryTimestamp, setLastTelemetryTimestamp] = useState<string>(() => {
+    const d = new Date();
+    return `${d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}, ${d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+  });
   const [earlyWarning, setEarlyWarning] = useState<EarlyWarningDetails | null>({
-    date: '25 Aug 2026, 04:30 PM',
-    current_risk: 78.4,
+    date: 'Recent Stream Observation',
+    current_risk: 61.2,
     previous_risk: 42.1,
-    delta: 36.3,
-    message: 'Risk increased by +36.3 percentage points compared with previous observation (42.1% → 78.4%).'
+    delta: 19.1,
+    message: 'Risk increased by +19.1 percentage points compared with baseline observation (42.1% → 61.2%).'
   });
 
   const streamingTimerRef = useRef<number | null>(null);
 
-  // Initial Data Fetch
+  // Initial Data Fetch on Authentication
   useEffect(() => {
+    if (!isAuthenticated) return;
+
     async function init() {
+      setIsInitialLoading(true);
       try {
         const [stList, scList, alList] = await Promise.all([
           fetchStations().catch(() => []),
@@ -88,7 +103,7 @@ export function App() {
       }
     }
     init();
-  }, []);
+  }, [isAuthenticated]);
 
   // Handle Predict Action
   const handleAnalyze = async () => {
@@ -189,6 +204,23 @@ export function App() {
     };
   }, [isStreaming, selectedLocation, stations]);
 
+  // Handle Logout
+  const handleLogout = () => {
+    try {
+      localStorage.removeItem('hydroguard_auth');
+      localStorage.removeItem('hydroguard_user');
+    } catch (err) {
+      console.warn('LocalStorage error:', err);
+    }
+    setIsStreaming(false);
+    setIsAuthenticated(false);
+  };
+
+  // If not authenticated, display the Login Screen directly
+  if (!isAuthenticated) {
+    return <LoginPage onLoginSuccess={() => setIsAuthenticated(true)} />;
+  }
+
   if (isInitialLoading) {
     return (
       <div className="min-h-screen bg-[#030712] flex flex-col items-center justify-center space-y-4 text-slate-300">
@@ -219,12 +251,13 @@ export function App() {
         onOpenAbout={() => setIsAboutOpen(true)}
         demoScenarios={demoScenarios}
         onSelectScenario={handleSelectScenario}
+        onLogout={handleLogout}
       />
 
       {/* Main App Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
         
-        {/* Real-time Streaming Ticker Indicator */}
+        {/* Simulated Streaming Ticker Indicator */}
         {isStreaming && (
           <div className="flex items-center justify-between px-4 py-2 rounded-xl bg-emerald-950/60 border border-emerald-500/50 text-xs text-emerald-300 backdrop-blur-md">
             <div className="flex items-center space-x-2">
@@ -232,8 +265,8 @@ export function App() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
               </span>
-              <span className="font-bold font-mono">LIVE SENSOR STREAM ACTIVE:</span>
-              <span>Receiving 15s edge telemetry packets with dynamic environmental fluctuation for {selectedLocation}</span>
+              <span className="font-bold font-mono">SIMULATED IoT SENSOR STREAM ACTIVE:</span>
+              <span>Receiving simulated telemetry packets with dynamic environmental fluctuation for {selectedLocation} (Demo Mode)</span>
             </div>
             <span className="font-mono text-[11px] text-emerald-400 font-bold">{lastTelemetryTimestamp}</span>
           </div>

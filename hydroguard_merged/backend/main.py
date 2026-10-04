@@ -28,17 +28,19 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
-# Configure CORS Origins
+# Configure CORS Origins (Supports wildcard * or comma-separated Vercel domains)
 cors_origins_env = os.environ.get("CORS_ORIGINS", "*")
 if cors_origins_env.strip() == "*":
     allow_origins = ["*"]
+    allow_credentials = False
 else:
-    allow_origins = [origin.strip() for origin in cors_origins_env.split(",") if origin.strip()]
+    allow_origins = [origin.strip().rstrip("/") for origin in cors_origins_env.split(",") if origin.strip()]
+    allow_credentials = True
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allow_origins,
-    allow_credentials=True,
+    allow_credentials=allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )

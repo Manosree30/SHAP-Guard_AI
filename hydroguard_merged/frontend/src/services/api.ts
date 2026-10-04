@@ -4,9 +4,12 @@ import {
 } from '../types';
 
 // Dynamic API base URL: Reads VITE_API_URL if defined (e.g. https://hydroguard-api.onrender.com),
-// otherwise falls back to relative '/api' (for local Vite proxy or unified static serving)
-const ENV_API_URL = import.meta.env.VITE_API_URL || '';
-const API_BASE = ENV_API_URL ? `${ENV_API_URL.replace(/\/+$/, '')}/api` : '/api';
+// otherwise falls back to relative '/api' (for local Vite proxy or unified static serving).
+// Robust against whether the user enters a trailing slash or appends '/api' in Vercel settings.
+const RAW_ENV_URL = (import.meta.env.VITE_API_URL || '').trim().replace(/\/+$/, '');
+const API_BASE = RAW_ENV_URL 
+  ? (RAW_ENV_URL.endsWith('/api') ? RAW_ENV_URL : `${RAW_ENV_URL}/api`)
+  : '/api';
 
 export async function predictWaterQuality(
   params: WaterQualityParams,

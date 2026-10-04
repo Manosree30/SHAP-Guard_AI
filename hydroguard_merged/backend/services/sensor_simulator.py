@@ -4,6 +4,7 @@ Manages river monitoring stations, historical trend time-series, live anomaly al
 and preset demo scenarios for instant judge evaluations.
 """
 
+import zlib
 import numpy as np
 from datetime import datetime, timedelta
 
@@ -34,16 +35,16 @@ DEMO_SCENARIOS = [
         "description": "Recent moderate rainfall triggered agricultural topsoil erosion and mild fertilizer runoff.",
         "expected_risk": "MODERATE",
         "parameters": {
-            "ph": 7.85,
-            "turbidity": 26.5,
-            "dissolved_oxygen": 5.4,
-            "temperature": 26.0,
-            "conductivity": 580.0,
-            "tds": 420.0,
-            "bod": 4.2,
-            "cod": 22.0,
-            "rainfall": 48.0,
-            "water_flow": 260.0
+            "ph": 8.10,
+            "turbidity": 32.0,
+            "dissolved_oxygen": 4.8,
+            "temperature": 27.0,
+            "conductivity": 650.0,
+            "tds": 480.0,
+            "bod": 5.5,
+            "cod": 28.0,
+            "rainfall": 45.0,
+            "water_flow": 220.0
         }
     },
     {
@@ -121,23 +122,23 @@ RIVER_STATIONS = [
         "state": "Tamil Nadu",
         "lat": 11.3250,
         "lng": 77.0150,
-        "current_risk_score": 38.5,
+        "current_risk_score": 32.0,
         "current_risk_level": "MODERATE",
         "wqi": 72.0,
-        "previous_risk_score": 32.0,
+        "previous_risk_score": 28.0,
         "spike_alert": False,
-        "last_updated": "25 Aug 2026, 04:15 PM",
+        "last_updated": "Dynamic",
         "status_summary": "Moderate agricultural runoff from upstream plantations following light shower.",
         "parameters": {
-            "ph": 7.8,
-            "turbidity": 22.0,
-            "dissolved_oxygen": 5.8,
-            "temperature": 25.2,
-            "conductivity": 490.0,
-            "tds": 340.0,
-            "bod": 3.8,
-            "cod": 19.0,
-            "rainfall": 32.0,
+            "ph": 8.10,
+            "turbidity": 32.0,
+            "dissolved_oxygen": 4.8,
+            "temperature": 27.0,
+            "conductivity": 650.0,
+            "tds": 480.0,
+            "bod": 5.5,
+            "cod": 28.0,
+            "rainfall": 45.0,
             "water_flow": 220.0
         }
     },
@@ -148,12 +149,12 @@ RIVER_STATIONS = [
         "state": "Tamil Nadu",
         "lat": 11.1085,
         "lng": 77.3411,
-        "current_risk_score": 86.2,
+        "current_risk_score": 86.6,
         "current_risk_level": "CRITICAL",
         "wqi": 32.5,
         "previous_risk_score": 80.0,
         "spike_alert": False,
-        "last_updated": "25 Aug 2026, 04:25 PM",
+        "last_updated": "Dynamic",
         "status_summary": "High TDS and chemical oxygen demand indicating untreated dye house effluent.",
         "parameters": {
             "ph": 5.1,
@@ -175,12 +176,12 @@ RIVER_STATIONS = [
         "state": "Tamil Nadu",
         "lat": 9.9252,
         "lng": 78.1198,
-        "current_risk_score": 64.0,
+        "current_risk_score": 59.3,
         "current_risk_level": "HIGH",
         "wqi": 54.0,
         "previous_risk_score": 45.0,
         "spike_alert": True,
-        "last_updated": "25 Aug 2026, 04:00 PM",
+        "last_updated": "Dynamic",
         "status_summary": "Low base flow and untreated stormwater inflow causing localized hypoxia.",
         "parameters": {
             "ph": 6.8,
@@ -202,12 +203,12 @@ RIVER_STATIONS = [
         "state": "Tamil Nadu",
         "lat": 8.7139,
         "lng": 77.7567,
-        "current_risk_score": 14.2,
+        "current_risk_score": 0.2,
         "current_risk_level": "LOW",
-        "wqi": 91.5,
+        "wqi": 94.0,
         "previous_risk_score": 16.0,
         "spike_alert": False,
-        "last_updated": "25 Aug 2026, 03:50 PM",
+        "last_updated": "Dynamic",
         "status_summary": "Optimal mountain flow with saturated dissolved oxygen and pristine clarity.",
         "parameters": {
             "ph": 7.4,
@@ -229,12 +230,12 @@ RIVER_STATIONS = [
         "state": "Demo Catchment",
         "lat": 11.0000,
         "lng": 77.5000,
-        "current_risk_score": 22.0,
+        "current_risk_score": 0.2,
         "current_risk_level": "LOW",
-        "wqi": 86.0,
+        "wqi": 88.3,
         "previous_risk_score": 24.0,
         "spike_alert": False,
-        "last_updated": "25 Aug 2026, 04:30 PM",
+        "last_updated": "Dynamic",
         "status_summary": "Standard demonstration station for interactive parameter experimentation.",
         "parameters": {
             "ph": 7.2,
@@ -251,10 +252,39 @@ RIVER_STATIONS = [
     }
 ]
 
+def get_all_monitoring_stations():
+    """
+    Dynamically computes station risk scores, levels, and WQI using the authoritative ML prediction model.
+    Guarantees 100% consistency across map markers, overview cards, and prediction lab.
+    """
+    from services.ml_service import MLService
+    try:
+        ml_service = MLService.get_instance()
+    except Exception:
+        return RIVER_STATIONS
+
+    now_str = datetime.now().strftime("%d %b %Y, %I:%M %p")
+    evaluated_stations = []
+    
+    for st in RIVER_STATIONS:
+        st_copy = dict(st)
+        try:
+            pred = ml_service.predict(st["parameters"])
+            st_copy["current_risk_score"] = pred["risk_score"]
+            st_copy["current_risk_level"] = pred["risk_level"]
+            st_copy["wqi"] = pred["wqi"]
+            st_copy["last_updated"] = now_str
+        except Exception:
+            pass
+        evaluated_stations.append(st_copy)
+        
+    return evaluated_stations
+
 def generate_location_trends(location_name: str, time_range: str = "30d") -> dict:
     """
     Generates realistic historical trend observations for graphs and timeline.
     Supports '7d', '30d', '90d' windows with realistic hydrological oscillations and spike events.
+    Uses deterministic zlib CRC32 seeding so that trends are identical across server restarts.
     """
     days = 30
     if time_range == "7d":
@@ -262,14 +292,17 @@ def generate_location_trends(location_name: str, time_range: str = "30d") -> dic
     elif time_range == "90d":
         days = 90
 
-    # Determine baseline characteristics based on location
-    matched = next((s for s in RIVER_STATIONS if s["name"].lower() == location_name.lower() or s["id"] == location_name.lower()), RIVER_STATIONS[0])
+    stations = get_all_monitoring_stations()
+    loc_clean = location_name.strip().lower()
+    matched = next((s for s in stations if s["name"].lower() == loc_clean or s["id"].lower() == loc_clean), stations[0])
     base_params = matched["parameters"]
     base_risk = matched["current_risk_score"]
 
-    np.random.seed(abs(hash(location_name)) % 10000 + days)
+    # Deterministic seed using zlib CRC32 of station id + days
+    seed = (zlib.crc32(matched["id"].encode('utf-8')) + days) % (2**32)
+    np.random.seed(seed)
     
-    end_date = datetime(2026, 8, 25, 16, 30)
+    end_date = datetime.now()
     data_points = []
     
     # Generate daily records
@@ -283,7 +316,7 @@ def generate_location_trends(location_name: str, time_range: str = "30d") -> dic
         
         # Inject an early warning surge spike around day 3-5 before latest
         surge = 0.0
-        if 0 <= i <= 2 and matched["spike_alert"]:
+        if 0 <= i <= 2 and matched.get("spike_alert", False):
             surge = 25.0
 
         ph = float(np.clip(base_params["ph"] + np.random.normal(0, 0.25) - (surge * 0.02), 4.5, 9.5))
@@ -293,7 +326,7 @@ def generate_location_trends(location_name: str, time_range: str = "30d") -> dic
         cod = float(np.clip(base_params["cod"] + np.random.normal(0, 2.0) + (surge * 0.4), 2.0, 120.0))
         rainfall = float(np.clip(base_params["rainfall"] + np.random.exponential(5.0) if np.random.rand() > 0.6 else 0.0, 0.0, 150.0))
         
-        risk = float(np.clip(base_risk + wave + (surge * 0.9) + np.random.normal(0, 3.0), 5.0, 96.0))
+        risk = float(np.clip(base_risk + wave + (surge * 0.9) + np.random.normal(0, 3.0), 0.0, 100.0))
         
         if risk <= 25.0:
             level = "LOW"
@@ -363,14 +396,19 @@ def get_live_alerts():
     """
     Generates dynamic active pollution incident alerts based on current station telemetry.
     """
+    stations = get_all_monitoring_stations()
+    cauvery = next((s for s in stations if s["id"] == "cauvery"), stations[0])
+    noyyal = next((s for s in stations if s["id"] == "noyyal"), stations[1])
+    vaigai = next((s for s in stations if s["id"] == "vaigai"), stations[2])
+
     alerts = [
         {
             "id": "alt_cauvery_spike",
             "station_id": "cauvery",
             "station_name": "Cauvery River (Erode Station)",
-            "severity": "HIGH",
+            "severity": cauvery["current_risk_level"],
             "title": "Cauvery Monitoring Station: Early Pollution Warning",
-            "message": "Risk increased by +36.3 percentage points compared with previous observation (42.1% → 78.4%).",
+            "message": f"Risk increased by +19.1 percentage points compared with previous observation (42.1% → {cauvery['current_risk_score']:.1f}%).",
             "primary_reason": "Turbidity increased to 58.0 NTU and Dissolved Oxygen depleted to 2.9 mg/L.",
             "timestamp": "16 minutes ago",
             "status": "ACTIVE",
@@ -380,9 +418,9 @@ def get_live_alerts():
             "id": "alt_noyyal_critical",
             "station_id": "noyyal",
             "station_name": "Noyyal River (Tiruppur Corridor)",
-            "severity": "CRITICAL",
+            "severity": noyyal["current_risk_level"],
             "title": "Noyyal River: Severe Chemical Load & Acidic Ingress",
-            "message": "Pollution risk reached 86.2/100 (CRITICAL). Extreme TDS (1120 mg/L) and low pH (5.1).",
+            "message": f"Pollution risk reached {noyyal['current_risk_score']:.1f}/100 ({noyyal['current_risk_level']}). Extreme TDS (1120 mg/L) and low pH (5.1).",
             "primary_reason": "Suspected untreated industrial dye and chemical solvent discharge during low flow.",
             "timestamp": "35 minutes ago",
             "status": "ACTIVE",
@@ -392,9 +430,9 @@ def get_live_alerts():
             "id": "alt_vaigai_hypoxia",
             "station_id": "vaigai",
             "station_name": "Vaigai River (Madurai Gateway)",
-            "severity": "HIGH",
+            "severity": vaigai["current_risk_level"],
             "title": "Vaigai River: Moderate Hypoxia & Organic BOD Surge",
-            "message": "Pollution risk elevated to 64.0/100 (HIGH). Dissolved oxygen declined below 4.0 mg/L.",
+            "message": f"Pollution risk elevated to {vaigai['current_risk_score']:.1f}/100 ({vaigai['current_risk_level']}). Dissolved oxygen declined below 4.0 mg/L.",
             "primary_reason": "Stagnant low flow conditions concentrating untreated organic runoff.",
             "timestamp": "1 hour ago",
             "status": "INVESTIGATING",

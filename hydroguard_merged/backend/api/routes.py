@@ -13,7 +13,8 @@ from models.schemas import (
 from services.ml_service import MLService
 from services.sensor_simulator import (
     RIVER_STATIONS, DEMO_SCENARIOS,
-    generate_location_trends, get_live_alerts
+    generate_location_trends, get_live_alerts,
+    get_all_monitoring_stations
 )
 
 router = APIRouter()
@@ -60,8 +61,8 @@ def predict_pollution_risk(input_data: WaterQualityInput):
 @router.get("/locations", response_model=List[StationItem])
 @router.get("/stations", response_model=List[StationItem])
 def get_monitoring_stations():
-    """Retrieves all active river monitoring stations with their current live telemetry and risk status."""
-    return RIVER_STATIONS
+    """Retrieves all active river monitoring stations with dynamically evaluated model risk status."""
+    return get_all_monitoring_stations()
 
 @router.get("/trends/{location}", response_model=TrendsResponse)
 def get_historical_trends(
