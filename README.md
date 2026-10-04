@@ -94,22 +94,40 @@ Hydroguard-XAI-merged_2/
 
 ---
 
-## 🧠 5. Machine Learning & Explainable AI (Tree SHAP)
+## 🧠 5. Machine Learning & Explainable AI (SHAP TreeExplainer)
 
 ### Dual Random Forest Architecture
 - **Classifier**: Random Forest Classifier for discrete severity categories (**LOW**, **MODERATE**, **HIGH**, **CRITICAL**).
 - **Regressor**: Random Forest Regressor for continuous risk index ($0 - 100$).
-- **Benchmark Performance**:
+- **Benchmark Performance (Evaluated on Synthetic Benchmark Data)**:
   - **Accuracy**: `94.58%`
   - **Precision / Recall / F1**: `94.59% / 94.58% / 94.28%`
   - **Regression MAE / RMSE**: `1.00 / 1.68` points
   - **$R^2$ Score**: `0.9967`
+  > *Note: Metrics derived from evaluation on synthetic environmental benchmark data. The prototype demonstrates decision-support architecture; ground field-validation remains essential future work.*
 
-### Exact Tree SHAP Formulation
-For any input vector $x$, local feature attribution $\Delta_j$ for each tree node split is calculated across all decision trees:
-$$\hat{y}(x) = \text{base\_value} + \sum_{j=1}^{M} \Delta_j$$
-- $\Delta_j > 0$: Feature $j$ **increased** the predicted pollution risk.
-- $\Delta_j \le 0$: Feature $j$ **mitigated** or buffered the predicted risk.
+### Exact SHAP (SHapley Additive exPlanations) Formulation
+Integrated with `shap.TreeExplainer` (Lundberg et al., 2020), which computes exact local Shapley values in polynomial time:
+$$\hat{y}(x) = \text{base\_value} + \sum_{j=1}^{M} \phi_j(x)$$
+- $\phi_j > 0$: Parameter $j$ **increased** the predicted pollution risk score.
+- $\phi_j \le 0$: Parameter $j$ **mitigated** or buffered the predicted risk.
+- Mathematical efficiency guarantee: The sum of all feature SHAP attributions plus the expected base value ($\approx 33.29$) equals the exact model predicted risk score.
+
+---
+
+## 🎯 6. Demo Scenarios & Test Suite
+
+| Scenario | Primary Factors | Expected Risk | Approx. Score |
+| :--- | :--- | :--- | :--- |
+| **Pristine / Safe Baseline** | DO $8.1$ mg/L, BOD $1.2$, Turbidity $2.8$ NTU | **LOW** | $\approx 0.2\%$ |
+| **Agricultural Fertilizer Runoff**| Turbidity $32.0$ NTU, BOD $5.5$, Conductivity $650$ | **MODERATE**| $\approx 32.0\%$ |
+| **Urban Sewage & Hypoxia** | DO $2.9$ mg/L, BOD $9.5$, Turbidity $58.0$ NTU | **HIGH** | $\approx 61.2\%$ |
+| **Industrial Acid Discharge** | pH $4.80$, TDS $1180$, COD $98.0$, Turbidity $85$ | **CRITICAL** | $\approx 87.7\%$ |
+
+### Demo Credentials
+- **Email**: `admin@hydroguard.ai`
+- **Password**: `hydroguard123`
+*(Includes 1-click Auto-fill button on the Login page)*
 
 ---
 

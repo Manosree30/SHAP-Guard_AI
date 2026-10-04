@@ -1,0 +1,11 @@
+{
+  "framework": "vite",
+  "buildCommand": "cd hydroguard_merged/frontend && npm install && npm run build",
+  "outputDirectory": "hydroguard_merged/frontend/dist",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

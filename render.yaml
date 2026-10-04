@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: hydroguard-xai-backend
+    env: python
+    rootDir: hydroguard_merged
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python -m uvicorn backend.main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: CORS_ORIGINS
+        value: "*"
