@@ -1,160 +1,329 @@
-# SHAP Hydro (HydroGuard-XAI)
+# 🌊 SHAP Hydro (HydroGuard-XAI)
+
 ### Explainable AI-Based River Pollution Risk Prediction & Decision Support System
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110%2B-009688.svg)](https://fastapi.tiangolo.com/)
-[![React](https://img.shields.io/badge/React-18.3-61DAFB.svg)](https://reactjs.org/)
+[![React](https://img.shields.io/badge/React-18.3-61DAFB.svg)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6.svg)](https://www.typescriptlang.org/)
-[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-38B2AC.svg)](https://tailwindcss.com/)
-[![SHAP](https://img.shields.io/badge/XAI-Tree_SHAP-orange.svg)](https://github.com/shap/shap)
+[![XAI](https://img.shields.io/badge/XAI-SHAP-orange.svg)](https://github.com/shap/shap)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-> **"Explainable AI for Early River Pollution Risk Prediction & Actionable Environmental Intelligence"**
+> **Explainable AI for Early River Pollution Risk Prediction & Actionable Environmental Intelligence**
 
 ---
 
-## 📌 1. Project Overview
+## 🌐 Live Demo
 
-Conventional water quality monitoring relies on periodic grab sampling and multi-day laboratory turnaround times. By the time contamination is confirmed, toxic effluent and hypoxic water plumes have already dispersed downstream—threatening municipal drinking water intakes, degrading ecosystems, and causing catastrophic fish mortality.
+🚀 **[Open HydroGuard-XAI](https://shap-guard-ai.vercel.app/)**
 
-**SHAP Hydro (HydroGuard-XAI)** is an end-to-end Explainable AI (XAI) environmental intelligence platform that:
-1. **Predicts**: Quantifies continuous river pollution risk ($0 - 100\%$) and classifies severity into **LOW**, **MODERATE**, **HIGH**, or **CRITICAL**.
-2. **Explains**: Utilizes **Exact Tree SHAP (SHapley Additive exPlanations)** to attribute precise positive and negative risk contributions to every telemetry parameter, generating transparent visual explanations and dynamic natural-language ecological summaries.
-3. **Acts**: Translates primary pollution drivers into prioritized, context-aware **operational recommendations** (e.g., municipal intake buffering, rapid field sampling, industrial outfall audits, mobile aeration).
+⚙️ **[Backend API](https://shap-guard-ai.onrender.com/)**
 
----
+### Deployment Architecture
 
-## ⚡ 2. Quick Start Guide
-
-### Prerequisites
-- **Python 3.10+** (Python 3.13 supported)
-- **Node.js v18+** and **npm**
-
-### Step 1: Navigate to Project
-```bash
-cd hydroguard_merged
+```text
+User
+  ↓
+Vercel
+React + Vite
+  ↓ REST API
+Render
+FastAPI Backend
+  ↓
+Machine Learning + XAI
+  ↓
+Pollution Risk Prediction
 ```
 
-### Step 2: Launch Both Servers (One-Click)
+---
+
+## 📌 Project Overview
+
+**HydroGuard-XAI** is an AI-powered river pollution monitoring and decision-support platform.
+
+The system:
+
+* 🔮 Predicts pollution risk from **0–100%**
+* 🚦 Classifies risk as **LOW / MODERATE / HIGH / CRITICAL**
+* 🧠 Explains predictions using **Explainable AI**
+* 📊 Visualizes pollution trends
+* 🗺️ Displays river monitoring stations
+* 🚨 Generates pollution alerts
+* ⚡ Provides actionable recommendations
+* 📡 Supports simulated IoT telemetry
+
+---
+
+## 🧪 Input Parameters
+
+The model analyzes:
+
+* pH
+* Dissolved Oxygen (DO)
+* BOD
+* COD
+* Turbidity
+* Temperature
+* TDS
+* Electrical Conductivity
+* Rainfall Intensity
+* Water Flow Rate
+
+---
+
+## 🤖 Machine Learning
+
+### Models
+
+* **Random Forest Classifier** → Pollution risk category
+* **Random Forest Regressor** → Continuous pollution risk score
+* **SHAP / XAI** → Feature-level prediction explanations
+
+### Benchmark Performance
+
+> Evaluated on synthetic environmental benchmark data.
+
+| Metric    |      Score |
+| --------- | ---------: |
+| Accuracy  | **94.58%** |
+| Precision | **94.59%** |
+| Recall    | **94.58%** |
+| F1 Score  | **94.28%** |
+| R² Score  | **0.9967** |
+
+> ⚠️ These metrics are based on synthetic benchmark data. Real-world field validation is required before operational deployment.
+
+---
+
+## 🎯 Demo Scenarios
+
+| Scenario                          | Risk        |
+| --------------------------------- | ----------- |
+| 🌱 Pristine / Safe Baseline       | 🟢 LOW      |
+| 🌾 Agricultural Fertilizer Runoff | 🟡 MODERATE |
+| 🏙️ Urban Sewage & Hypoxia        | 🟠 HIGH     |
+| 🏭 Industrial Acid Discharge      | 🔴 CRITICAL |
+
+---
+
+## 🔐 Demo Login
+
+```text
+Email: admin@hydroguard.ai
+Password: hydroguard123
+```
+
+---
+
+## 📡 API Endpoints
+
+| Method | Endpoint                 | Description                           |
+| ------ | ------------------------ | ------------------------------------- |
+| `POST` | `/api/predict`           | Pollution prediction and XAI analysis |
+| `GET`  | `/api/stations`          | River monitoring stations             |
+| `GET`  | `/api/trends/{location}` | Pollution trends                      |
+| `GET`  | `/api/alerts`            | Active pollution alerts               |
+| `GET`  | `/api/scenarios`         | Demo scenarios                        |
+| `POST` | `/api/simulate-stream`   | Simulated telemetry                   |
+| `GET`  | `/api/health`            | Backend health status                 |
+
+---
+
+## 📂 Project Structure
+
+```text
+SHAP-Guard_AI/
+│
+├── README.md
+│
+└── hydroguard_merged/
+    │
+    ├── backend/
+    │   ├── api/
+    │   ├── models/
+    │   ├── services/
+    │   └── xai/
+    │
+    ├── frontend/
+    │   └── src/
+    │
+    ├── ml/
+    ├── evaluation/
+    ├── docs/
+    └── requirements.txt
+```
+
+---
+
+## ⚡ Run Locally
+
+### Requirements
+
+* Python 3.10+
+* Node.js 18+
+* npm
+
+### Clone Repository
+
+```bash
+git clone https://github.com/Manosree30/SHAP-Guard_AI.git
+```
+
+### Enter Project
+
+```bash
+cd SHAP-Guard_AI/hydroguard_merged
+```
+
+### Start Application
+
 ```bash
 python run_servers.py
 ```
 
-### Step 3: Access the Platform
-- 🌐 **Frontend Dashboard**: [http://localhost:5173](http://localhost:5173)
-- ⚙️ **Backend API**: [http://127.0.0.1:8000](http://127.0.0.1:8000)
-- 📖 **Interactive Swagger Docs**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
-- 🩺 **Health Check**: [http://127.0.0.1:8000/api/health](http://127.0.0.1:8000/api/health)
+### Local URLs
 
----
-
-## 📂 3. Repository Structure
-
-```
-Hydroguard-XAI-merged_2/
-├── README.md                      # Root documentation
-└── hydroguard_merged/             # Main application package
-    ├── run_servers.py             # Simultaneous FastAPI + Vite launcher
-    ├── requirements.txt           # Python dependencies
-    ├── Dockerfile & docker-compose# Containerization specs
-    ├── backend/                   # FastAPI Backend
-    │   ├── main.py                # Server entrypoint & route registration
-    │   ├── verify_all.py          # Automated comprehensive test suite
-    │   ├── api/                   # REST API routes
-    │   ├── models/                # Pydantic schemas & ML serialized models
-    │   ├── services/              # ML inference, station stores & simulators
-    │   └── xai/                   # Tree SHAP & NLP explanation engine
-    ├── frontend/                  # React 18 + TypeScript + Vite UI
-    │   ├── src/
-    │   │   ├── components/        # UI Cards, Charts, Gauges, Station Maps
-    │   │   ├── services/          # API client
-    │   │   └── types/             # TypeScript domain definitions
-    │   ├── tailwind.config.js     # Cyber/scientific dark telemetry theme
-    │   └── package.json           # Node dependencies
-    ├── ml/                        # ML training pipeline & synthetic generator
-    └── docs/                      # Scientific documentation & architectural diagrams
+```text
+Frontend: http://localhost:5173
+Backend:  http://127.0.0.1:8000
+Swagger:  http://127.0.0.1:8000/docs
+Health:   http://127.0.0.1:8000/api/health
 ```
 
 ---
 
-## 🔬 4. Telemetry Input Parameters & Safe Baselines
+## ☁️ Deployment
 
-| Parameter | Unit | Safe Range | Ecological Significance |
-| :--- | :--- | :--- | :--- |
-| **pH Level** | — | `6.5 – 8.5` | Chemical equilibrium; $<6.0$ or $>8.5$ signals industrial effluent or acid shock. |
-| **Turbidity** | `NTU` | `0.0 – 10.0` | Suspended particulates blocking sunlight and carrying adsorbed contaminants. |
-| **Dissolved Oxygen (DO)** | `mg/L` | `> 6.0` | Respiration baseline; critical levels ($<3.5$ mg/L) indicate acute hypoxia. |
-| **Water Temperature** | `°C` | `18.0 – 28.0` | Thermal pollution; elevated temps accelerate microbial oxygen consumption. |
-| **Electrical Conductivity** | `µS/cm` | `100 – 500` | Dissolved ionic minerals; surges indicate fertilizer runoff or chemical ingress. |
-| **Total Dissolved Solids (TDS)**| `mg/L` | `50 – 300` | Total mineral and dissolved solid burden. |
-| **BOD (Biochemical Oxygen Demand)**| `mg/L` | `< 3.0` | Organic loading from domestic sewage or food-processing wastewater. |
-| **COD (Chemical Oxygen Demand)**| `mg/L` | `< 15.0` | Non-biodegradable refractory chemical contamination. |
-| **Rainfall Intensity** | `mm` | `0.0 – 50.0` | Non-point source overland surface runoff driver. |
-| **Water Flow Rate** | `m³/s` | `50 – 400` | Natural dilution capacity; stagnant low flow concentrates localized toxins. |
+| Component | Platform         |
+| --------- | ---------------- |
+| Frontend  | Vercel           |
+| Backend   | Render           |
+| ML / XAI  | FastAPI + Python |
 
----
+### Production URLs
 
-## 🧠 5. Machine Learning & Explainable AI (SHAP TreeExplainer)
+**Frontend:**
+[https://shap-guard-ai.vercel.app/](https://shap-guard-ai.vercel.app/)
 
-### Dual Random Forest Architecture
-- **Classifier**: Random Forest Classifier for discrete severity categories (**LOW**, **MODERATE**, **HIGH**, **CRITICAL**).
-- **Regressor**: Random Forest Regressor for continuous risk index ($0 - 100$).
-- **Benchmark Performance (Evaluated on Synthetic Benchmark Data)**:
-  - **Accuracy**: `94.58%`
-  - **Precision / Recall / F1**: `94.59% / 94.58% / 94.28%`
-  - **Regression MAE / RMSE**: `1.00 / 1.68` points
-  - **$R^2$ Score**: `0.9967`
-  > *Note: Metrics derived from evaluation on synthetic environmental benchmark data. The prototype demonstrates decision-support architecture; ground field-validation remains essential future work.*
-
-### Exact SHAP (SHapley Additive exPlanations) Formulation
-Integrated with `shap.TreeExplainer` (Lundberg et al., 2020), which computes exact local Shapley values in polynomial time:
-$$\hat{y}(x) = \text{base\_value} + \sum_{j=1}^{M} \phi_j(x)$$
-- $\phi_j > 0$: Parameter $j$ **increased** the predicted pollution risk score.
-- $\phi_j \le 0$: Parameter $j$ **mitigated** or buffered the predicted risk.
-- Mathematical efficiency guarantee: The sum of all feature SHAP attributions plus the expected base value ($\approx 33.29$) equals the exact model predicted risk score.
+**Backend:**
+[https://shap-guard-ai.onrender.com/](https://shap-guard-ai.onrender.com/)
 
 ---
 
-## 🎯 6. Demo Scenarios & Test Suite
+## 🔄 System Workflow
 
-| Scenario | Primary Factors | Expected Risk | Approx. Score |
-| :--- | :--- | :--- | :--- |
-| **Pristine / Safe Baseline** | DO $8.1$ mg/L, BOD $1.2$, Turbidity $2.8$ NTU | **LOW** | $\approx 0.2\%$ |
-| **Agricultural Fertilizer Runoff**| Turbidity $32.0$ NTU, BOD $5.5$, Conductivity $650$ | **MODERATE**| $\approx 32.0\%$ |
-| **Urban Sewage & Hypoxia** | DO $2.9$ mg/L, BOD $9.5$, Turbidity $58.0$ NTU | **HIGH** | $\approx 61.2\%$ |
-| **Industrial Acid Discharge** | pH $4.80$, TDS $1180$, COD $98.0$, Turbidity $85$ | **CRITICAL** | $\approx 87.7\%$ |
-
-### Demo Credentials
-- **Email**: `admin@hydroguard.ai`
-- **Password**: `hydroguard123`
-*(Includes 1-click Auto-fill button on the Login page)*
-
----
-
-## 📡 6. API Reference
-
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `POST` | `/api/predict` | Executes ML inference, Tree SHAP attributions, and action synthesis |
-| `GET` | `/api/stations` | Returns active river monitoring stations with coordinates and current status |
-| `GET` | `/api/trends/{location}` | Returns 7d, 30d, and 90d telemetry history and surge anomaly timelines |
-| `GET` | `/api/alerts` | Returns active high-priority pollution alerts |
-| `GET` | `/api/scenarios` | Returns 4 preset evaluation scenarios (Pristine, Agri, Sewage, Industrial) |
-| `POST` | `/api/simulate-stream` | Ingests simulated real-time IoT edge telemetry packets |
-| `GET` | `/api/health` | Service health status and loaded model evaluation metrics |
+```text
+Water Quality Parameters
+          ↓
+    Data Processing
+          ↓
+   Random Forest Model
+          ↓
+   Pollution Risk Score
+          ↓
+Risk Classification
+LOW / MODERATE / HIGH / CRITICAL
+          ↓
+      SHAP / XAI
+          ↓
+Identify Major Risk Drivers
+          ↓
+Actionable Recommendations
+```
 
 ---
 
-## 🧪 7. Automated Test Suite
+## 🚨 Key Features
 
-To run the complete verification suite verifying all 4 demo scenarios, geolocation stations, trends, and alert engines:
+### 🔮 Risk Prediction
 
-```bash
-cd hydroguard_merged/backend
-python verify_all.py
+Predicts a continuous pollution risk score between **0 and 100**.
+
+### 🧠 Explainable AI
+
+Shows which environmental parameters contribute to the prediction.
+
+### 🗺️ River Monitoring
+
+Displays monitoring stations and their current status.
+
+### 📊 Trend Analysis
+
+Provides pollution and telemetry trend visualization.
+
+### 🚨 Alert System
+
+Highlights potentially critical pollution conditions.
+
+### 📡 IoT Simulation
+
+Demonstrates continuous environmental telemetry processing using simulated data.
+
+---
+
+## ⚠️ Limitations
+
+* Current benchmark evaluation uses synthetic environmental data.
+* IoT telemetry is simulated rather than collected from physical sensors.
+* Real-world field validation is required.
+* Model performance may vary with real environmental conditions.
+* The system is intended as a decision-support tool and should not replace professional environmental assessment.
+
+---
+
+## 🌱 Future Scope
+
+* Real-time IoT sensor integration
+* Real-world environmental datasets
+* Satellite and remote-sensing integration
+* Pollution source identification
+* Advanced anomaly detection
+* Mobile notifications
+* Government/environmental monitoring integration
+* Field validation with environmental agencies
+
+---
+
+## 🏆 Project Goal
+
+HydroGuard-XAI goes beyond simply showing water-quality measurements.
+
+It aims to answer three important questions:
+
+> **What is the pollution risk?**
+
+> **Why is the risk increasing?**
+
+> **What action should be taken?**
+
+```text
+Monitor
+   ↓
+Predict
+   ↓
+Explain
+   ↓
+Alert
+   ↓
+Act
 ```
 
 ---
 
 ## 📄 License
-This project is licensed under the MIT License.
+
+This project is licensed under the **MIT License**.
+
+See [LICENSE](LICENSE) for details.
+
+---
+
+## 👥 Project
+
+**SHAP Hydro (HydroGuard-XAI)**
+
+> **Explainable AI for Early River Pollution Risk Prediction & Actionable Environmental Intelligence**
+
+🚀 **Live Demo:** [https://shap-guard-ai.vercel.app/](https://shap-guard-ai.vercel.app/)
+
+💻 **GitHub:** [https://github.com/Manosree30/SHAP-Guard_AI/](https://github.com/Manosree30/SHAP-Guard_AI/)
